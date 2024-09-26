@@ -12,7 +12,7 @@ function renderSignUp() {
             <input type="password" id="password" placeholder="Enter your password"><br>
             <button type="button" onclick="handleSignUp()">Sign Up</button>
         </form>
-    `;
+    ;
 }
 
 let userName = '';
@@ -36,7 +36,7 @@ function renderHomePage() {
         <button type="button" onclick="handleCreatePost()">Post</button>
         <h3>Your Posts</h3>
         <ul id="postList"></ul>
-    `;
+    ;
 }
 
 let posts = [];
