@@ -1,6 +1,11 @@
 const rootDiv = document.getElementById('root');
 
+let userName = ''; // storing username after sign-up
+let userPosts = [];  // will store an array of posts created by the user
+
+// get the sign-up form
 function renderSignUp() {
+    // Inject HTML into rootDiv for signing up
     rootDiv.innerHTML = `
         <h1>Sign Up</h1>
         <form id="signupForm">
@@ -12,22 +17,29 @@ function renderSignUp() {
             <input type="password" id="password" placeholder="Enter your password"><br>
             <button type="button" onclick="handleSignUp()">Sign Up</button>
         </form>
-    ;
+    `;
 }
 
-let userName = '';
+// handling the sign-up
 function handleSignUp() {
-  const nameInput = document.getElementById('name').value;
+    
+    //user's info from the form
+const nameInput = document.getElementById('name').value;
     const emailInput = document.getElementById('email').value;
-    const passwordInput = document.getElementById('password').value;
+        const passwordInput = document.getElementById('password').value;
+
+    // checking if fields are filled out
     if (nameInput && emailInput && passwordInput) {
-        userName = nameInput; // Store the user's name in a global variable
-        renderHomePage();     // Move to the next step in the app
-    } else {
-        alert('Please fill out all fields');
+userName = nameInput;  //save the userName in a variable
+localStorage.setItem('userName', userName);  // saved user's name in Local Storage
+renderHomePage();  // move to the next step in the app
+        } 
+else {
+        alert('Please fill out all fields');  //
     }
 }
 
+// home page with post creation
 function renderHomePage() {
     rootDiv.innerHTML = `
         <h1>Welcome, ${userName}!</h1>
@@ -36,26 +48,54 @@ function renderHomePage() {
         <button type="button" onclick="handleCreatePost()">Post</button>
         <h3>Your Posts</h3>
         <ul id="postList"></ul>
-    ;
+    `;
+
+//show any existing posts
+        renderPostList();
 }
 
-let posts = [];
 function handleCreatePost() {
     const postContent = document.getElementById('postContent').value;
-    
+
     if (postContent) {
-        posts.push(postContent); // Add the new post to the posts array
-        renderPostList();        // Update the displayed post list
-    } else {
-        alert('Post content cannot be empty');
+     userPosts.push(postContent);  // Add the new post to the userPosts array
+        localStorage.setItem('userPosts', JSON.stringify(userPosts));  // Save posts in Local Storage
+            renderPostList();  // Update the displayed post list
+    } 
+        else {
+            alert('Post content cannot be empty');
     }
 }
 
+// render the list of posts
 function renderPostList() {
+    // get the unordered list 
     const postListElement = document.getElementById('postList');
-    postListElement.innerHTML = ''; // Clear the current list
-    posts.forEach((post) => {
-        const postItem = document.createElement('li');
-        postItem.textContent = post;
-        postListElement.appendChild(postItem);});
+    
+    postListElement.innerHTML = '';  // clear the current list
+
+    // looping through userPosts array  and to display each post
+    userPosts.forEach((post) => {
+        
+    const postItem = document.createElement('li');  
+    postItem.textContent = post; 
+postListElement.appendChild(postItem);  
+    });
 }
+
+// check for saved user and posts in storage when the page loads
+document.addEventListener('DOMContentLoaded', () => {
+    const savedUserName = localStorage.getItem('userName');  // retrieve the username the storage
+
+    // if userName is found, load home page and posts
+    if (savedUserName) {
+        
+userName = savedUserName;  // set global userName to saved userName
+    userPosts = JSON.parse(localStorage.getItem('userPosts')) || [];  // retrieve posts from Local Storage, or  start an empty array
+    renderHomePage(); 
+        
+                    } 
+else {
+        renderSignUp();  // show the sign-up form if not user is saved
+    }
+});
